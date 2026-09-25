@@ -31,7 +31,7 @@ export default function App() {
   }
 
   return (
-    <SQLiteProvider databaseName='cazador.db'>
+    <SQLiteProvider databaseName='cazador.bd'>
 
       <NavigationContainer>
         <Stack.Navigator initialRouteName='ListaScreen'>
