@@ -2,10 +2,10 @@ import { View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
-export default function ListaScreen() {
+export default function FormularioScreen() {
   return (
     <SafeAreaView>
-      <Text>Lista</Text>
+      <Text>Formulario</Text>
     </SafeAreaView>
   );
 }
