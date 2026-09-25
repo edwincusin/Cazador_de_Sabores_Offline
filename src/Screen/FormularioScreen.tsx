@@ -15,11 +15,12 @@ export default function FormularioScreen({ navigation, route }: any) {
   const tituloEdicion = route.params?.tituloActual || '';
   const califEdicion = route.params?.calificacionActual?.toString() || '';
   const comenEdicion = route.params?.comentariosActuales || '';
+  const foto = route.params?.fotoActual || '';
 
   const [titulo, setTitulo] = useState(tituloEdicion);
   const [calificacion, setCalificacion] = useState(califEdicion);
   const [comentarios, setComentarios] = useState(comenEdicion);
-  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
+  const [fotoPreview, setFotoPreview] = useState(foto);
 
 
   const tomarFoto = async () => {
@@ -47,11 +48,11 @@ export default function FormularioScreen({ navigation, route }: any) {
       Alert.alert("Exito", "Guardado con Exito")
       navigation.goBack();
     } catch (error) {
-      Alert.alert("Error", "Error al guardar registro"+error)
+      Alert.alert("Error", "Error al guardar registro" + error)
     }
   }
 
-   const updateRegistro = async () => {
+  const updateRegistro = async () => {
     const calificacionNumero = parseInt(calificacion);
     try {
       await database.runAsync(
@@ -80,17 +81,21 @@ export default function FormularioScreen({ navigation, route }: any) {
       setCalificacion("");
       return false
     }
+    if (!fotoPreview) {
+      Alert.alert("Error", "Debes tomar una foto antes de guardar");
+      return false;
+    }
     return true;
   }
 
 
-  const manejarGuardarEditar=()=>{
-    if(!validarCampos()){
+  const manejarGuardarEditar = () => {
+    if (!validarCampos()) {
       return;
     }
-    if(idEdicion){
+    if (idEdicion) {
       updateRegistro();
-    }else{
+    } else {
       insertRegistro();
     }
   }
@@ -152,7 +157,7 @@ export default function FormularioScreen({ navigation, route }: any) {
         )}
 
         <View style={styles.footerActions}>
-          <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.navigate("ListaScreen")}>
+          <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
             <Ionicons name='close' color={'#D1004E'} size={22} />
             <Text style={styles.cancelButtonText}>Cancelar</Text>
           </TouchableOpacity>
