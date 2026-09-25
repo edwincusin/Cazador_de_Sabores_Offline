@@ -76,7 +76,16 @@ export default function ListaScreen({ navigation }: any) {
                                     <Text>{item.titulo}</Text>
                                     <Text>{item.calificacion}</Text>
                                 </View>
-                                <TouchableOpacity onPress={()=>navigation.navigate('FormularioScreen')}>
+                                <TouchableOpacity onPress={()=>navigation.navigate('FormularioScreen',
+                                    {   
+                                        idActual:item.id,
+                                        tituloActual:item.titulo,
+                                        calificacionActual:item.calificacion,
+                                        comentariosActuales:item.comentarios,
+                                        fotoActual:item.fotoBase64
+
+                                    }
+                                    )}>
                                     <Ionicons name='pencil' color={'tomato'} size={25} />
                                 </TouchableOpacity>
                                 <TouchableOpacity>

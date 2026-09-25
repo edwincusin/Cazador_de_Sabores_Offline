@@ -24,8 +24,8 @@ export default function App() {
   if (!dbInicializada) {
     return (
       <SafeAreaView>
-        <ActivityIndicator size={'large'} color={'blue'}/>
-          <Text>Cargando datos de la base de datos..</Text>
+        <ActivityIndicator size={'large'} color={'blue'} />
+        <Text>Cargando datos de la base de datos..</Text>
       </SafeAreaView>
     )
   }
@@ -43,7 +43,8 @@ export default function App() {
           <Stack.Screen
             name='FormularioScreen'
             component={FormularioScreen}
-            options={{ title: 'Formulario nuevo o editar ' }}
+            options={({ route }:any) => ({title: route.params?.idActual ? 'Editar registro' : 'Nuevo registro'
+            })}
           />
         </Stack.Navigator>
       </NavigationContainer>
