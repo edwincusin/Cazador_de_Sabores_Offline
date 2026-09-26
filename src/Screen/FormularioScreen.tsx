@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TextInput, TouchableOpacity, Alert, Image, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,8 +20,9 @@ export default function FormularioScreen({ navigation, route }: any) {
   const [titulo, setTitulo] = useState(tituloEdicion);
   const [calificacion, setCalificacion] = useState(califEdicion);
   const [comentarios, setComentarios] = useState(comenEdicion);
-  const [fotoPreview, setFotoPreview] = useState(foto);
-
+  const [fotoPreview, setFotoPreview] = useState<string>(foto);
+  console.log("foto:", foto[5]);
+  console.log("previwe foto:", fotoPreview[5]);
 
   const tomarFoto = async () => {
     const permiso = await ImagePicker.requestCameraPermissionsAsync();
@@ -30,7 +31,7 @@ export default function FormularioScreen({ navigation, route }: any) {
 
     const resultado = await ImagePicker.launchCameraAsync({
       base64: true,
-      quality: 0.3
+      quality: 0.1
     });
 
     if (!resultado.canceled && resultado.assets[0].base64) {
@@ -41,14 +42,18 @@ export default function FormularioScreen({ navigation, route }: any) {
   const insertRegistro = async () => {
     const fechaActual = new Date().toLocaleDateString();
     const calificacionNumero = parseInt(calificacion);
+
+
     try {
       await database.runAsync(
-        'INSERT INTO registros (titulo,calificacion,comentarios,fotoBase64,fecha)VALUES (?,?,?,?,?)', titulo, calificacionNumero, comentarios, fotoPreview, fechaActual
+        'INSERT INTO registros (titulo,calificacion,comentarios,fotoBase64,fecha)VALUES (?,?,?,?,?)', [titulo, calificacionNumero, comentarios, fotoPreview, fechaActual]
       )
       Alert.alert("Exito", "Guardado con Exito")
       navigation.goBack();
     } catch (error) {
       Alert.alert("Error", "Error al guardar registro" + error)
+      console.log("Error", "Error al guardar registro" + error)
+
     }
   }
 
@@ -56,12 +61,13 @@ export default function FormularioScreen({ navigation, route }: any) {
     const calificacionNumero = parseInt(calificacion);
     try {
       await database.runAsync(
-        'UPDATE registros  set titulo=?,calificacion=?,comentarios=? WHERE id=?', [titulo, calificacionNumero, comentarios, idEdicion]
+        'UPDATE registros  set titulo=?,calificacion=?,comentarios=?, fotoBase64=? WHERE id=?', [titulo, calificacionNumero, comentarios, fotoPreview, idEdicion]
       )
       Alert.alert("Exito", "Actualizacion con Exitosa")
       navigation.goBack();
     } catch (error) {
       Alert.alert("Error", "Error al actualizar registro")
+      console.log("Error", "Error al actualizar registro--->", error)
     }
   }
 
@@ -136,11 +142,11 @@ export default function FormularioScreen({ navigation, route }: any) {
           style={[styles.input, styles.textArea]}
         />
 
-        {!idEdicion && (
+        
           <View style={styles.photoSection}>
             <TouchableOpacity style={styles.cameraButton} onPress={tomarFoto}>
               <Ionicons name='camera' color={'#FFFFFF'} size={22} />
-              <Text style={styles.cameraButtonText}>Tomar foto</Text>
+              <Text style={styles.cameraButtonText}>{!idEdicion?'Tomar foto':'Tomar nueva foto'}</Text>
             </TouchableOpacity>
 
             <View style={styles.previewBox}>
@@ -154,7 +160,7 @@ export default function FormularioScreen({ navigation, route }: any) {
               )}
             </View>
           </View>
-        )}
+        
 
         <View style={styles.footerActions}>
           <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
